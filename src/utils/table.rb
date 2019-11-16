@@ -9,7 +9,9 @@ class Table
     @name = name
     @table = table.freeze
 
-    if (m = /(\d+)D(\d+)/i.match(type))
+    if type = "D66"
+      @type = :d66
+    elsif (m = /(\d+)D(\d+)/i.match(type))
       @type = :d
       @times = m[1].to_i
       @sides = m[2].to_i
@@ -25,6 +27,8 @@ class Table
     case @type
     when :d
       roll_d(bcdice)
+    when :d66
+      roll_d66(bcdice)
     end
   end
 
@@ -38,5 +42,13 @@ class Table
     index = value - @times
 
     return "#{@name}(#{value}) ＞ #{@table[index]}"
+  end
+
+  def roll_d66(bcdice)
+    dice1, = bcdice.roll(1, 6)
+    dice2, = bcdice.roll(1, 6)
+
+    index = (dice1 - 1) * 6 + (dice2 - 1)
+    return "#{@name}(#{dice1}#{dice2}) ＞ #{@table[index]}"
   end
 end
